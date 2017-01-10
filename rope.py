@@ -65,3 +65,12 @@ class Rope(object):
             return self.left.__str__() + self.right.__str__()
         else:
             return self.data
+
+    # API
+    def reduce(self):
+        """Search the tree and remove any redundant nodes."""
+        raise NotImplementedError
+
+    def insert(self, index, s):
+        """Insert string s at index i."""
+        raise NotImplementedError
