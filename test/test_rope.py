@@ -18,18 +18,14 @@ class Test(unittest.TestCase):
         self.assertEqual('', r.data)
 
     def test_index_onenode(self):
-        r = Rope('abc')
-        self.assertEqual(Rope('a'), r[0])
-        self.assertEqual(Rope('b'), r[1])
-        self.assertEqual(Rope('c'), r[2])
+        s = 'abc'
+        r = Rope(s)
+        for i in range(-len(s), len(s)):
+            self.assertEqual(Rope(s[i]), r[i])
 
-        self.assertEqual(Rope('c'), r[-1])
-        self.assertEqual(Rope('b'), r[-2])
-        self.assertEqual(Rope('a'), r[-3])
-
-        # Is there a better way to do this?
-        self.assertRaises(IndexError, r.__getitem__, 3)
-        self.assertRaises(IndexError, r.__getitem__, -4)
+        for i in range(len(s), 3 * len(s)):
+            self.assertRaises(IndexError, r.__getitem__, i)
+            self.assertRaises(IndexError, r.__getitem__, -(i + 1))
 
     def test_slice_onenode(self):
         s = 'abc'
@@ -42,22 +38,18 @@ class Test(unittest.TestCase):
             self.assertEqual(Rope(s[i:]), r[i:])
 
     def test_index_threenode(self):
-        r = Rope('ab')
-        s = Rope('cd')
-        t = r + s
+        s = 'abcde'
 
-        self.assertEqual(Rope('a'), t[0])
-        self.assertEqual(Rope('b'), t[1])
-        self.assertEqual(Rope('c'), t[2])
-        self.assertEqual(Rope('d'), t[3])
+        r0 = Rope(s[:2])
+        r1 = Rope(s[2:])
+        r = r0 + r1
 
-        self.assertEqual(Rope('d'), t[-1])
-        self.assertEqual(Rope('c'), t[-2])
-        self.assertEqual(Rope('b'), t[-3])
-        self.assertEqual(Rope('a'), t[-4])
+        for i in range(-len(s), len(s)):
+            self.assertEqual(Rope(s[i]), r[i])
 
-        self.assertRaises(IndexError, r.__getitem__, 4)
-        self.assertRaises(IndexError, r.__getitem__, -5)
+        for i in range(len(s), 3 * len(s)):
+            self.assertRaises(IndexError, r.__getitem__, i)
+            self.assertRaises(IndexError, r.__getitem__, -(i + 1))
 
     def test_equality(self):
         r = Rope('a') + Rope('b') + Rope('c')

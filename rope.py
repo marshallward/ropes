@@ -27,15 +27,19 @@ class Rope(object):
         return r
 
     def __getitem__(self, index):
-        # TODO: Combine int and slice?
-        #       Or is it faster to separate them?
 
         if isinstance(index, int):
+            if index < 0:
+                index += self.length
+
+            if index < 0 or index >= self.length:
+                raise IndexError('rope index out of range')
+
             if self.left and self.right:
-                if (index % self.length) < self.left.length:
-                    return self.left[index % self.length]
+                if index < self.left.length:
+                    return self.left[index]
                 else:
-                    return self.right[(index % self.length) - self.left.length]
+                    return self.right[index - self.left.length]
             else:
                 return Rope(self.data[index])
 
