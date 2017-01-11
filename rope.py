@@ -10,10 +10,10 @@ class Rope(object):
 
     def __eq__(self, other):
         if (self.left and self.right) and (other.left and other.right):
-            # Neither node is a left; check subnodes
+            # Neither node is a leaf; check subnodes
             return self.left == other.left and self.right == other.right
         elif (self.left and self.right) or (other.left and other.right):
-            # One node is a leaf; trees do not match
+            # Only one node is a leaf; tree structure does not match
             return False
         else:
             # Both nodes are leaves; check the data
@@ -32,10 +32,10 @@ class Rope(object):
 
         if isinstance(index, int):
             if self.left and self.right:
-                if index < self.left.length:
-                    return self.left[index]
+                if (index % self.length) < self.left.length:
+                    return self.left[index % self.length]
                 else:
-                    return self.right[index - self.left.length]
+                    return self.right[(index % self.length) - self.left.length]
             else:
                 return Rope(self.data[index])
 

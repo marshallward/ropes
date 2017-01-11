@@ -31,6 +31,24 @@ class Test(unittest.TestCase):
         self.assertRaises(IndexError, r.__getitem__, 3)
         self.assertRaises(IndexError, r.__getitem__, -4)
 
+    def test_index_threenode(self):
+        r = Rope('ab')
+        s = Rope('cd')
+        t = r + s
+
+        self.assertEqual(Rope('a'), t[0])
+        self.assertEqual(Rope('b'), t[1])
+        self.assertEqual(Rope('c'), t[2])
+        self.assertEqual(Rope('d'), t[3])
+
+        self.assertEqual(Rope('d'), t[-1])
+        self.assertEqual(Rope('c'), t[-2])
+        self.assertEqual(Rope('b'), t[-3])
+        self.assertEqual(Rope('a'), t[-4])
+
+        self.assertRaises(IndexError, r.__getitem__, 4)
+        self.assertRaises(IndexError, r.__getitem__, -5)
+
     def test_equality(self):
         r = Rope('a') + Rope('b') + Rope('c')
         s = Rope('a') + (Rope('b') + Rope('c'))
