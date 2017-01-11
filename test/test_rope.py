@@ -37,12 +37,11 @@ class Test(unittest.TestCase):
         for i in range(-3 * len(s), 3 * len(s)):
             self.assertEqual(Rope(s[i:]), r[i:])
 
+        # TODO: Test interior strides (combine all into double loop)
+
     def test_index_threenode(self):
         s = 'abcde'
-
-        r0 = Rope(s[:2])
-        r1 = Rope(s[2:])
-        r = r0 + r1
+        r = Rope('abc') + Rope('de')
 
         for i in range(-len(s), len(s)):
             self.assertEqual(Rope(s[i]), r[i])
@@ -50,6 +49,51 @@ class Test(unittest.TestCase):
         for i in range(len(s), 3 * len(s)):
             self.assertRaises(IndexError, r.__getitem__, i)
             self.assertRaises(IndexError, r.__getitem__, -(i + 1))
+
+    def test_slice_threenode(self):
+        s = 'abc' + 'de'
+        r = Rope('abc') + Rope('de')
+
+        # TODO: Condense this
+        self.assertEqual(Rope('abc') + Rope('de'), r[:])
+
+        self.assertEqual(Rope(''), r[:0])
+        self.assertEqual(Rope('a'), r[:1])
+        self.assertEqual(Rope('ab'), r[:2])
+        self.assertEqual(Rope('abc'), r[:3])
+        self.assertEqual(Rope('abc') + Rope('d'), r[:4])
+        self.assertEqual(Rope('abc') + Rope('de'), r[:5])
+
+        for i in range(len(s) + 1, 3 * len(s)):
+            self.assertEqual(Rope('abc') + Rope('de'), r[:i])
+
+        self.assertEqual(Rope('abc') + Rope('d'), r[:-1])
+        self.assertEqual(Rope('abc'), r[:-2])
+        self.assertEqual(Rope('ab'), r[:-3])
+        self.assertEqual(Rope('a'), r[:-4])
+        self.assertEqual(Rope(''), r[:-5])
+
+        for i in range(-3 * len(s), -len(s) - 1):
+            self.assertEqual(Rope(''), r[:i])
+
+        self.assertEqual(Rope('abc') + Rope('de'), r[0:])
+        self.assertEqual(Rope('bc') + Rope('de'), r[1:])
+        self.assertEqual(Rope('c') + Rope('de'), r[2:])
+        self.assertEqual(Rope('de'), r[3:])
+        self.assertEqual(Rope('e'), r[4:])
+        self.assertEqual(Rope(''), r[5:])
+
+        for i in range(len(s) + 1, 3 * len(s)):
+            self.assertEqual(Rope(''), r[i:])
+
+        self.assertEqual(Rope('e'), r[-1:])
+        self.assertEqual(Rope('de'), r[-2:])
+        self.assertEqual(Rope('c') + Rope('de'), r[-3:])
+        self.assertEqual(Rope('bc') + Rope('de'), r[-4:])
+        self.assertEqual(Rope('abc') + Rope('de'), r[-5:])
+
+        for i in range(-3 * len(s), -len(s) - 1):
+            self.assertEqual(Rope('abc') + Rope('de'), r[i:])
 
     def test_equality(self):
         r = Rope('a') + Rope('b') + Rope('c')
