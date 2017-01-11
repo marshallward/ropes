@@ -31,6 +31,16 @@ class Test(unittest.TestCase):
         self.assertRaises(IndexError, r.__getitem__, 3)
         self.assertRaises(IndexError, r.__getitem__, -4)
 
+    def test_slice_onenode(self):
+        s = 'abc'
+        r = Rope(s)
+
+        for i in range(-(len(s) + 2), len(s) + 2):
+            self.assertEqual(Rope(s[:i]), r[:i])
+
+        for i in range(-(len(s) + 2), len(s) + 2):
+            self.assertEqual(Rope(s[i:]), r[i:])
+
     def test_index_threenode(self):
         r = Rope('ab')
         s = Rope('cd')
