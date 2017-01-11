@@ -6,6 +6,12 @@ class Rope(object):
         self.right = None
         self.data = data
 
+    def __eq__(self, other):
+        if self.left and self.right:
+            return self.left == other.left and self.right == other.right
+        else:
+            return self.data == other.data
+
     def __add__(self, other):
         r = Rope()
         r.left = self
