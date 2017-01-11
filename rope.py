@@ -44,28 +44,30 @@ class Rope(object):
                 return Rope(self.data[index])
 
         elif isinstance(index, slice):
-            #i, j = index.start, index.stop
-
             # Normalise the indexes
-            i = index.start if index.start is not None else 0   # Unneeded?
+            i = index.start if index.start is not None else 0
             j = index.stop if index.stop is not None else self.length
+
+            if i < 0:
+                i = max(i + self.length, 0)
+            if j < 0:
+                j = max(j + self.length, 0)
+
+            i = min(max(i, 0), self.length)
+            j = min(max(j, 0), self.length)
 
             if self.left and self.right:
                 if i < self.left.length:
                     if j <= self.left.length:
-                        #li = (i % self.length) if i else None
                         return self.left[i:j]
                     else:
-                        #rj = j - self.left.length if j else None
-                        #return self.left[i:] + self.right[:rj]
-                        return self.left[i:] + self.right[:j]
+                        return (self.left[i:]
+                                + self.right[:(j - self.left.length)])
                 else:
-                    #rj = j - self.left.length if j else None
-                    #return self.right[(i - self.left.length):rj]
-                    return self.right[i:j]
+                    return self.right[(i - self.left.length)
+                                      :(j - self.left.length)]
             else:
-                #if (not i) and (j is None or j == self.length):
-                if i == 0 and j == self.length:
+                if i <= 0 and j >= self.length:
                     return self
                 else:
                     return Rope(self.data[i:j])

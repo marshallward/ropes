@@ -31,10 +31,10 @@ class Test(unittest.TestCase):
         s = 'abc'
         r = Rope(s)
 
-        for i in range(-(len(s) + 2), len(s) + 2):
+        for i in range(-3 * len(s), 3 * len(s)):
             self.assertEqual(Rope(s[:i]), r[:i])
 
-        for i in range(-(len(s) + 2), len(s) + 2):
+        for i in range(-3 * len(s), 3 * len(s)):
             self.assertEqual(Rope(s[i:]), r[i:])
 
     def test_index_threenode(self):
