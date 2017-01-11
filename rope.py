@@ -1,4 +1,6 @@
 class Rope(object):
+    # NOTE: self.left and self.right should either both point to subnodes or
+    #       both set to `None`, so checking both should not be necessary.
 
     def __init__(self, data=''):
         self.length = len(data)
@@ -7,9 +9,14 @@ class Rope(object):
         self.data = data
 
     def __eq__(self, other):
-        if self.left and self.right:
+        if (self.left and self.right) and (other.left and other.right):
+            # Neither node is a left; check subnodes
             return self.left == other.left and self.right == other.right
+        elif (self.left and self.right) or (other.left and other.right):
+            # One node is a leaf; trees do not match
+            return False
         else:
+            # Both nodes are leaves; check the data
             return self.data == other.data
 
     def __add__(self, other):
@@ -24,7 +31,6 @@ class Rope(object):
         #       Or is it faster to separate them?
 
         if isinstance(index, int):
-            # NOTE: It should not be necessary to check both
             if self.left and self.right:
                 if index < self.left.length:
                     return self.left[index]
