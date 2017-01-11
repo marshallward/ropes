@@ -31,6 +31,16 @@ class Test(unittest.TestCase):
         self.assertRaises(IndexError, r.__getitem__, 3)
         self.assertRaises(IndexError, r.__getitem__, -4)
 
+    def test_equality(self):
+        r = Rope('a') + Rope('b') + Rope('c')
+        s = Rope('a') + (Rope('b') + Rope('c'))
+        t = (Rope('a') + Rope('b')) + Rope('c')
+        u = Rope('abc')
+
+        self.assertNotEqual(r, s)
+        self.assertEqual(r, t)
+        self.assertNotEqual(r, u)
+
 
 if __name__ == '__main__':
     unittest.main()
