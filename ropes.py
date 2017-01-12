@@ -75,7 +75,7 @@ class Rope(object):
                     return Rope(self.data[i:j])
 
         else:
-            raise TypeError('list indices must be integers or slices, not {}'
+            raise TypeError('rope indices must be integers or slices, not {}'
                             ''.format(type(index).__name__))
 
     def __repr__(self):
