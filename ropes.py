@@ -1,3 +1,5 @@
+__version__ = '0.0.1'
+
 class Rope(object):
     # NOTE: self.left and self.right should either both point to subnodes or
     #       both set to `None`, so checking both should not be necessary.
@@ -49,9 +51,9 @@ class Rope(object):
             j = index.stop if index.stop is not None else self.length
 
             if i < 0:
-                i = max(i + self.length, 0)
+                i += self.length
             if j < 0:
-                j = max(j + self.length, 0)
+                j += self.length
 
             i = min(max(i, 0), self.length)
             j = min(max(j, 0), self.length)

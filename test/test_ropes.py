@@ -2,7 +2,7 @@ import sys
 import unittest
 
 sys.path.insert(1, '../')
-from rope import Rope
+from ropes import Rope
 
 class Test(unittest.TestCase):
 
