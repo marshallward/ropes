@@ -26,6 +26,9 @@ class Rope(object):
         else:
             raise TypeError('Only strings are currently supported')
 
+        # Word iteration
+        self.current = self
+
     def __eq__(self, other):
         if (self.left and self.right) and (other.left and other.right):
             return self.left == other.left and self.right == other.right
@@ -40,6 +43,7 @@ class Rope(object):
         r.left = self
         r.right = other
         r.length = self.length + other.length
+        r.current = self
         return r
 
     def __getitem__(self, index):
@@ -107,6 +111,28 @@ class Rope(object):
             return self.left.__str__() + self.right.__str__()
         else:
             return self.data
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.current:
+            if self.left and self.right:
+                if self.current == self.left:
+                    if self.left.current is None:
+                        self.current = self.right
+                        return next(self.right)
+                    else:
+                        return next(self.left)
+                else: # self.current == self.left:
+                    if self.right.current is None:
+                        self.current = None
+                    return next(self.right)
+            else:
+                self.current = None
+                return self.data
+        else:
+            raise StopIteration
 
     # API
     def reduce(self):
