@@ -5,23 +5,37 @@ class Rope(object):
     #       both set to `None`, so checking both should not be necessary.
 
     def __init__(self, data=''):
-        self.length = len(data)
-        self.left = None
-        self.right = None
-        self.data = data
+        if isinstance(data, list):
+            if len(data) == 0:
+                self.__init__()
+            elif len(data) == 1:
+                self.__init__(data[0])
+            else:
+                # Round-up division (to match rope arithmetic associativity)
+                idiv = len(data) // 2 + (len(data) % 2 > 0)
+
+                self.left = Rope(data[:idiv])
+                self.right = Rope(data[idiv:])
+                self.data = ''
+                self.length = self.left.length + self.right.length
+        elif isinstance(data, str):
+            self.left = None
+            self.right = None
+            self.data = data
+            self.length = len(data)
+        else:
+            raise TypeError('Only strings are currently supported')
 
     def __eq__(self, other):
         if (self.left and self.right) and (other.left and other.right):
-            # Neither node is a leaf; check subnodes
             return self.left == other.left and self.right == other.right
         elif (self.left and self.right) or (other.left and other.right):
-            # Only one node is a leaf; tree structure does not match
             return False
         else:
-            # Both nodes are leaves; check the data
             return self.data == other.data
 
     def __add__(self, other):
+        # TODO: Automatically collapse empty ropes
         r = Rope()
         r.left = self
         r.right = other

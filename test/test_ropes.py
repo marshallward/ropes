@@ -17,6 +17,17 @@ class Test(unittest.TestCase):
         self.assertEqual(0, r.length)
         self.assertEqual('', r.data)
 
+    def test_list(self):
+        self.assertEqual(Rope(), Rope([]))
+        self.assertEqual(Rope('abc'), Rope(['abc']))
+        self.assertEqual(Rope('ab') + Rope('cd'), Rope(['ab', 'cd']))
+        self.assertEqual(Rope('a') + Rope('b') + Rope('c'),
+                         Rope(['a', 'b', 'c']))
+
+        s = 'These are some words'.split()
+        r = (Rope('These') + Rope('are')) + (Rope('some') + Rope('words'))
+        self.assertEqual(r, Rope(s))
+
     def test_index_onenode(self):
         s = 'abc'
         r = Rope(s)
