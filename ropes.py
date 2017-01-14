@@ -118,21 +118,19 @@ class Rope(object):
     def __next__(self):
         if self.current:
             if self.left and self.right:
-                if self.current == self.left:
-                    if self.left.current is None:
-                        self.current = self.right
-                        return next(self.right)
-                    else:
-                        return next(self.left)
-                else: # self.current == self.left:
-                    if self.right.current is None:
-                        self.current = None
-                    return next(self.right)
+                try:
+                    return next(self.left)
+                except StopIteration:
+                    self.current = self.right
+                return next(self.right)
             else:
                 self.current = None
                 return self.data
         else:
             raise StopIteration
+
+    def next(self):
+        return self.__next__()
 
     # API
     def reduce(self):

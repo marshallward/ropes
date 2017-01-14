@@ -106,6 +106,12 @@ class Test(unittest.TestCase):
         for i in range(-3 * len(s), -len(s) - 1):
             self.assertEqual(Rope('abc') + Rope('de'), r[i:])
 
+    def test_word_iteration(self):
+        words = ['a', 'b', 'c', 'd', 'e']
+        rope = Rope(words)
+        for i, w in enumerate(rope):
+            self.assertEqual(w, words[i])
+
     def test_equality(self):
         r = Rope('a') + Rope('b') + Rope('c')
         s = Rope('a') + (Rope('b') + Rope('c'))
