@@ -50,6 +50,15 @@ class Test(unittest.TestCase):
 
         # TODO: Test interior strides (combine all into double loop)
 
+    def test_stride_onenode(self):
+        s = 'abcdefg'
+        r = Rope(s)
+
+        for i in range(0, len(s)):
+            for j in range(i, len(s)):
+                for k in range(1, len(s)):
+                    self.assertEqual(Rope(s[i:j:k]), r[i:j:k])
+
     def test_index_threenode(self):
         s = 'abcde'
         r = Rope('abc') + Rope('de')
