@@ -39,25 +39,22 @@ class Test(unittest.TestCase):
             self.assertRaises(IndexError, r.__getitem__, -(i + 1))
 
     def test_slice_onenode(self):
-        s = 'abc'
-        r = Rope(s)
-
-        for i in range(-3 * len(s), 3 * len(s)):
-            self.assertEqual(Rope(s[:i]), r[:i])
-
-        for i in range(-3 * len(s), 3 * len(s)):
-            self.assertEqual(Rope(s[i:]), r[i:])
-
-        # TODO: Test interior strides (combine all into double loop)
-
-    def test_stride_onenode(self):
         s = 'abcdefg'
         r = Rope(s)
 
-        for i in range(0, len(s)):
-            for j in range(i, len(s)):
+        # Implicit start, step
+        for i in range(-3 * len(s), 3 * len(s)):
+            self.assertEqual(Rope(s[:i]), r[:i])
+
+        # Implicit stop, step
+        for i in range(-3 * len(s), 3 * len(s)):
+            self.assertEqual(Rope(s[i:]), r[i:])
+
+        # Explicit slices
+        for i in range(-3 * len(s), 3 * len(s)):
+            for j in range(-3 * len(s), 3 * len(s)):
                 for k in range(1, len(s)):
-                    self.assertEqual(Rope(s[i:j:k]), r[i:j:k])
+                    self.assertEqual(s[i:j:k], str(r[i:j:k]))
 
     def test_index_threenode(self):
         s = 'abcde'
@@ -71,6 +68,7 @@ class Test(unittest.TestCase):
             self.assertRaises(IndexError, r.__getitem__, -(i + 1))
 
     def test_slice_threenode(self):
+        # Isn't this included in the other test now?
         s = 'abc' + 'de'
         r = Rope('abc') + Rope('de')
 
@@ -114,6 +112,15 @@ class Test(unittest.TestCase):
 
         for i in range(-3 * len(s), -len(s) - 1):
             self.assertEqual(Rope('abc') + Rope('de'), r[i:])
+
+    def test_stride_threenode(self):
+        s = 'abcde' + 'fghijkl'
+        r = Rope(['abcde', 'fghijkl'])
+
+        for i in range(-3 * len(s), 3 * len(s)):
+            for j in range(i, 3 * len(s)):
+                for k in range(1, len(s)):
+                    self.assertEqual(s[i:j:k], str(r[i:j:k]))
 
     def test_word_iteration(self):
         words = ['a', 'b', 'c', 'd', 'e']

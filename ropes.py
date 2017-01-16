@@ -64,8 +64,8 @@ class Rope(object):
                 return Rope(self.data[index])
 
         elif isinstance(index, slice):
-            # Slice logic taken from CPython's `sliceobject.c'
-            # It may be possible to streamline this a bit in Python
+            # Slice logic taken from CPython's sliceobject.c
+            # It may be possible to streamline this in Python
 
             # Step initialization
             if index.step is None:
@@ -94,7 +94,7 @@ class Rope(object):
                 if start < 0:
                     start = 0 if step > 0 else -1
                 if start >= self.length:
-                    start = self.length if step > 0 else (length - 1)
+                    start = self.length if step > 0 else (self.length - 1)
 
             # Stop index
             if index.stop is None:
@@ -106,7 +106,7 @@ class Rope(object):
                 if stop < 0:
                     stop = 0 if step > 0 else -1
                 if stop >= self.length:
-                    stop = self.length if step > 0 else (length - 1)
+                    stop = self.length if step > 0 else (self.length - 1)
 
             # Apply slice
             if self.left and self.right:
@@ -119,17 +119,10 @@ class Rope(object):
                                              :(stop - self.left.length):step])
                 else:
                     return self.right[(start - self.left.length)
-                                      :(stop - self.left.length):step]
+                                      :max(stop - self.left.length, 0)
+                                      :step]
             else:
-                if start <= 0 and stop >= self.length and step == 1:
-                    return self
-                else:
-                    # stop = -1 for negative stride would be incorrectly
-                    # converted to (self.length - 1) by the slice operation.
-                    # This if-block reverts the explicit value to None.
-                    if step < 0 and stop == -1:
-                        stop = None
-                    return Rope(self.data[start:stop:step])
+                return Rope(self.data[start:stop:step])
 
         else:
             raise TypeError('rope indices must be integers or slices, not {}'
