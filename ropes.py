@@ -64,8 +64,8 @@ class Rope(object):
                 return Rope(self.data[index])
 
         elif isinstance(index, slice):
-            # Slice logic taken from CPython's sliceobject.c
-            # It may be possible to streamline this in Python
+            ## Slice logic taken from CPython's sliceobject.c
+            ## It may be possible to streamline this in Python
 
             # Step initialization
             if index.step is None:
@@ -122,7 +122,7 @@ class Rope(object):
                                       :max(stop - self.left.length, 0)
                                       :step]
             else:
-                return Rope(self.data[start:stop:step])
+                return Rope(self.data[index])
 
         else:
             raise TypeError('rope indices must be integers or slices, not {}'
