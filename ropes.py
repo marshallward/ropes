@@ -60,12 +60,53 @@ class Rope(object):
                 return Rope(self.data[index])
 
         elif isinstance(index, slice):
-            ## TODO: Rewrite to use the index (int) method above
-            #if self.left and self.right:
-            #    # TODO
-            #else:
-            #    return Rope(self.data[index])
+            # TODO: Rewrite to use the index (int) method above
+            if self.left and self.right:
+                # XXX These checks are wrong for negative stride
+                lstart = (index.start is None or
+                          0 <= index.start < self.left.length or
+                          index.start < -self.right.length)
 
+                lstop = (index.stop is not None and
+                         (0 < index.stop <= self.left.length or
+                          index.stop <= -self.right.length))
+
+                if lstart and lstop:
+                    # TODO: Streamline this (set start then add/subtract)
+                    if index.start is None or index.start >= 0:
+                        start = index.start
+                    else:
+                        start = index.start + self.right.length
+
+                    if index.stop > 0:
+                        stop = index.stop
+                    else:
+                        stop = index.stop + self.right.length
+
+                    return self.left[start:stop:index.step]
+
+                elif not lstart and not lstop:
+                    if index.start >= self.left.length:
+                        start = index.start - self.left.length
+                    else:
+                        start = index.start
+
+                    if index.stop is None or index.stop < 0:
+                        stop = index.stop
+                    else:
+                        stop = index.stop - self.left.length
+
+                    return self.right[start:stop:index.step]
+
+                else:
+                    # TODO!
+                    print('NYI')
+                    pass
+            else:
+                return Rope(self.data[index])
+
+
+            # Old explicit implementation
 
             ## Slice logic taken from CPython's sliceobject.c
             ## It may be possible to streamline this in Python
