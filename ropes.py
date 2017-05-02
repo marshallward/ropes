@@ -49,21 +49,24 @@ class Rope(object):
     def __getitem__(self, index):
 
         if isinstance(index, int):
-            if index < 0:
-                index += self.length
-
-            if index < 0 or index >= self.length:
-                raise IndexError('rope index out of range')
-
             if self.left and self.right:
-                if index < self.left.length:
-                    return self.left[index]
+                if (index % self.length) < self.left.length:
+                    idx = index - self.right.length * (index // self.length)
+                    return self.left[idx]
                 else:
-                    return self.right[index - self.left.length]
+                    idx = index - self.left.length * (index // self.length + 1)
+                    return self.right[idx]
             else:
                 return Rope(self.data[index])
 
         elif isinstance(index, slice):
+            ## TODO: Rewrite to use the index (int) method above
+            #if self.left and self.right:
+            #    # TODO
+            #else:
+            #    return Rope(self.data[index])
+
+
             ## Slice logic taken from CPython's sliceobject.c
             ## It may be possible to streamline this in Python
 

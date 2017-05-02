@@ -1,0 +1,44 @@
+Indexing rule::
+
+   r = 'abc'
+   s = 'defgh'
+   t = r + s
+
+Desired result
+
++----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|   x|  x|  x|  a|  b|  c|  d|  e|  f|  g|  h|  a|  b|  c|  d|  e|  f|  g|  h|  x|  x|  x|  x|
++----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| -11|-10| -9| -8| -7| -6| -5| -4| -3| -2| -1|  0|  1|  2|  3|  4|  5|  6|  7|  8|  9| 10| 11|
++----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+|  -8| -7| -6| -3| -2| -1| -5| -4| -3| -2| -1|  0|  1|  2|  0|  1|  2|  3|  4|  3|  4|  5|  5|
++----+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
+Am I in the 'r' rope?
+
+1.  Rule repeats every t.length (= 8):
+
+      Left:  index % t.length < r.length)
+
+    That is.
+
+      (index % self.length) < self.left.length
+
+2.  Get the left index, skipping over right-rope indices:
+
+   ..., -, -, -3, -2, -1, -, -, -, -, -, 0, 1, 2, -, -, -, -, -, 3, 4, 5, -, -, -, -, -, 6, 7, 8, -, -, ...
+
+    For every 8 (length) elements, need to skip over 5 (right length):
+
+    new_index = index - self.right.length * (index // self.length)
+
+3. Similar rules for the right:
+
+      Test is just "not" left (``else``)
+
+      new_index = index - self.left.length * (index // self.length)
+
+
+Slices:
+
+
