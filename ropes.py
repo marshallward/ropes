@@ -50,12 +50,19 @@ class Rope(object):
 
         if isinstance(index, int):
             if self.left and self.right:
-                if (index % self.length) < self.left.length:
-                    idx = index - self.right.length * (index // self.length)
-                    return self.left[idx]
+                if index < -self.right.length or 0 <= index < self.left.length:
+                    subrope = self.left
                 else:
-                    idx = index - self.left.length * (index // self.length + 1)
-                    return self.right[idx]
+                    subrope = self.right
+
+                if index < -self.right.length:
+                    subindex = index + self.right.length
+                elif index >= self.left.length:
+                    subindex = index - self.left.length
+                else:
+                    subindex = index
+
+                return subrope[subindex]
             else:
                 return Rope(self.data[index])
 
