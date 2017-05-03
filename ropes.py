@@ -104,11 +104,10 @@ class Rope(object):
                     if index.stop is not None and index.stop >= 0:
                         stop -= self.left.length
 
+                    rstart = None
                     if index.step:
-                        offset = (self.left.length - max(start, -self.left.length)) % index.step
-                        print(self.left.length, start, index.step)
+                        offset = (max(start, 0) + index.step - self.left.length) % index.step
                         if offset:
-                            print('OFFSET')
                             rstart = offset
                         else:
                             rstart = None
@@ -122,60 +121,65 @@ class Rope(object):
 
             # Old explicit implementation
 
-            ## Slice logic taken from CPython's sliceobject.c
-            ## It may be possible to streamline this in Python
+            # Slice logic taken from CPython's sliceobject.c
+            # It may be possible to streamline this in Python
 
-            # Step initialization
-            if index.step is None:
-                step = 1
-            else:
-                if index.step == 0:
-                    raise ValueError('slice step cannot be zero')
-                else:
-                    step = index.step
-
-            # Default start/stop indices
-            if step < 0:
-                default_start = self.length - 1
-                default_stop = -1
-            else:
-                default_start = 0
-                default_stop = self.length
-
-            # Start index
-            if index.start is None:
-                start = default_start
-            else:
-                start = index.start
-                if start < 0:
-                    start += self.length
-                if start < 0:
-                    start = 0 if step > 0 else -1
-                if start >= self.length:
-                    start = self.length if step > 0 else (self.length - 1)
-
-            # Stop index
-            if index.stop is None:
-                stop = default_stop
-            else:
-                stop = index.stop
-                if stop < 0:
-                    stop += self.length
-                if stop < 0:
-                    stop = 0 if step > 0 else -1
-                if stop >= self.length:
-                    stop = self.length if step > 0 else (self.length - 1)
-
-            # Apply slice
             if self.left and self.right:
+                # Step initialization
+                if index.step is None:
+                    step = 1
+                else:
+                    if index.step == 0:
+                        raise ValueError('slice step cannot be zero')
+                    else:
+                        step = index.step
+
+                # Default start/stop indices
+                if step < 0:
+                    default_start = self.length - 1
+                    default_stop = -1
+                else:
+                    default_start = 0
+                    default_stop = self.length
+
+                # Start index
+                if index.start is None:
+                    start = default_start
+                else:
+                    start = index.start
+                    if start < 0:
+                        start += self.length
+                    if start < 0:
+                        start = 0 if step > 0 else -1
+                    if start >= self.length:
+                        start = self.length if step > 0 else (self.length - 1)
+
+                # Stop index
+                if index.stop is None:
+                    stop = default_stop
+                else:
+                    stop = index.stop
+                    if stop < 0:
+                        stop += self.length
+                    if stop < 0:
+                        stop = 0 if step > 0 else -1
+                    if stop >= self.length:
+                        stop = self.length if step > 0 else (self.length - 1)
+
+                # Apply slice
+                print('index', index.start, index.stop, index.step)
+                print('slice', start, stop, step)
                 if start < self.left.length:
                     if stop <= self.left.length:
+                        print('LEFT')
                         return self.left[start:stop:step]
                     else:
+                        print('MIXED')
                         return (self.left[start::step]
                                 + self.right[(start + step - self.left.length) % step
                                              :(stop - self.left.length):step])
                 else:
+                    print('RIGHT')
                     return self.right[(start - self.left.length)
                                       :max(stop - self.left.length, 0)
                                       :step]
