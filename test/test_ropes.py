@@ -120,6 +120,7 @@ class Test(unittest.TestCase):
         for i in range(-3 * len(s), 3 * len(s)):
             for j in range(i, 3 * len(s)):
                 for k in range(1, len(s)):
+                    print(i,j,k)
                     self.assertEqual(s[i:j:k], str(r[i:j:k]))
 
     def test_word_iteration(self):
