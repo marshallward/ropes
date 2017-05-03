@@ -68,24 +68,28 @@ class Rope(object):
                           index.start < -self.right.length)
 
                 lstop = (index.stop is not None and
-                         (0 < index.stop <= self.left.length or
+                         (0 <= index.stop <= self.left.length or
                           index.stop <= -self.right.length))
 
                 if lstart and lstop:
+                    print('LEFT')
                     # TODO: Streamline this (set start then add/subtract)
                     if index.start is None or index.start >= 0:
                         start = index.start
                     else:
                         start = index.start + self.right.length
 
-                    if index.stop > 0:
+                    if index.stop >= 0:
                         stop = index.stop
+                    elif index.stop == -self.right.length:
+                        stop = None
                     else:
                         stop = index.stop + self.right.length
 
                     return self.left[start:stop:index.step]
 
                 elif not lstart and not lstop:
+                    print('RIGHT')
                     if index.start >= self.left.length:
                         start = index.start - self.left.length
                     else:
@@ -101,7 +105,15 @@ class Rope(object):
                 else:
                     # TODO!
                     print('NYI')
-                    pass
+                    start = index.start
+                    if index.start is not None and index.start < 0:
+                        start += self.right.length
+
+                    stop = index.stop
+                    if index.stop is not None and index.stop >= 0:
+                        stop -= self.left.length
+
+                    return self.left[start::index.step] + self.right[:stop:index.step]
             else:
                 return Rope(self.data[index])
 
