@@ -50,11 +50,6 @@ class Rope(object):
 
         if isinstance(index, int):
             if self.left and self.right:
-                if index < -self.right.length or 0 <= index < self.left.length:
-                    subrope = self.left
-                else:
-                    subrope = self.right
-
                 if index < -self.right.length:
                     subindex = index + self.right.length
                 elif index >= self.left.length:
@@ -62,12 +57,27 @@ class Rope(object):
                 else:
                     subindex = index
 
-                return subrope[subindex]
+                if index < -self.right.length or 0 <= index < self.left.length:
+                    return self.left[subindex]
+                else:
+                    return self.right[subindex]
             else:
                 return Rope(self.data[index])
 
         elif isinstance(index, slice):
             if self.left and self.right:
+                # XXX Attempt number three!
+                if (index.start is None or
+                        index.start < -self.right.length or
+                        0 <= index.start < self.left.length):
+                    first = self.left
+                else:
+                    first = self.right
+
+
+
+
+
                 # XXX These checks are wrong for negative stride
                 lstart = (index.start is None or
                           0 <= index.start < self.left.length or
