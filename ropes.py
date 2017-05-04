@@ -74,8 +74,8 @@ class Rope(object):
                 else:
                     first = self.right
 
-                if step > 0:
-                    if (index.stop is None or
+                #if step > 0:
+                #    if (index.stop is None or
 
 
 
