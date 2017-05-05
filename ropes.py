@@ -67,18 +67,41 @@ class Rope(object):
         elif isinstance(index, slice):
             if self.left and self.right:
                 # XXX Attempt number three!
+                start = index.start
                 if (index.start is None or
                         index.start < -self.right.length or
                         0 <= index.start < self.left.length):
-                    first = self.left
+                    head = self.left
+                    if index.start and index.start < -self.right.length:
+                        start += self.right.length
                 else:
-                    first = self.right
+                    head = self.right
+                    if index.start and index.start >= self.left.length:
+                        start -= self.left.length
 
-                if step > 0:
+                # TODO: stop = -self.right.length is adding a null string
+                stop = index.stop
+                if index.step is None or index.step > 0:
                     if (index.stop is None or
+                            -self.right.length <= index.stop < 0 or
+                            index.stop > self.left.length):
+                        tail = self.right
+                        if index.stop and index.stop > self.left.length:
+                            stop -= self.left.length
+                    else:
+                        tail = self.left
+                        if index.stop < -self.right.length:
+                            stop += self.right.length
+                else:
+                    raise ValueError('No negative steps yet')
 
+                if head == tail:
+                    return head[start:stop:index.step]
+                else:
+                    # TODO stride offset
+                    return head[start::index.step] + tail[:stop:index.step]
 
-
+                #------------------------------------------------
                 # XXX These checks are wrong for negative stride
                 lstart = (index.start is None or
                           0 <= index.start < self.left.length or
@@ -136,7 +159,7 @@ class Rope(object):
             else:
                 return Rope(self.data[index])
 
-
+            #----------------------------------------------------
             # Old explicit implementation
 
             # Slice logic taken from CPython's sliceobject.c
