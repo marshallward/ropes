@@ -79,11 +79,15 @@ class Rope(object):
                     if index.start and index.start >= self.left.length:
                         start -= self.left.length
 
-                # TODO: stop = -self.right.length is adding a null string
+                # TODO: stop = -right.length is adding a null string
+                # There are
+                #   1. tail = left and stop = None (or left.length)
+                #   2. tail = right and remove the null tail somehow
+                # Currently doing 1, but 2 might be cleaner
                 stop = index.stop
                 if index.step is None or index.step > 0:
                     if (index.stop is None or
-                            -self.right.length <= index.stop < 0 or
+                            -self.right.length < index.stop < 0 or
                             index.stop > self.left.length):
                         tail = self.right
                         if index.stop and index.stop > self.left.length:
@@ -92,14 +96,20 @@ class Rope(object):
                         tail = self.left
                         if index.stop < -self.right.length:
                             stop += self.right.length
+                        elif index.stop == -self.right.length:
+                            stop = None
                 else:
                     raise ValueError('No negative steps yet')
 
                 if head == tail:
                     return head[start:stop:index.step]
                 else:
-                    # TODO stride offset
-                    return head[start::index.step] + tail[:stop:index.step]
+                    ilen = head.length - max(start, -head.length) % head.length if start else head.length
+                    #offset = (head.length // index.step) * index.step + index.step - head.length if index.step else None
+                    offset = ((head.length // index.step + 1) * index.step - head.length) % index.step if index.step else None
+                    print('ilen', ilen, 'offset', offset)
+
+                    return head[start::index.step] + tail[offset:stop:index.step]
 
                 #------------------------------------------------
                 # XXX These checks are wrong for negative stride
