@@ -46,6 +46,12 @@ class Rope(object):
         r.current = self
         return r
 
+    def __len__(self):
+        if self.left and self.right:
+            return len(self.left.data) + len(self.right.data)
+        else:
+            return(len(self.data))
+
     def __getitem__(self, index):
 
         if isinstance(index, int):
@@ -79,25 +85,27 @@ class Rope(object):
                     if index.start and index.start >= self.left.length:
                         start -= self.left.length
 
-                # TODO: stop = -right.length is adding a null string
-                # There are
+                # TODO: stop = -right.length could be on either subrope.
+                # There are two options:
                 #   1. tail = left and stop = None (or left.length)
-                #   2. tail = right and remove the null tail somehow
-                # Currently doing 1, but 2 might be cleaner
+                #   2. tail = right as a '' string, which is removed
+                # Currently doing method 2, but I'm on the fence here.
                 stop = index.stop
                 if index.step is None or index.step > 0:
                     if (index.stop is None or
-                            -self.right.length < index.stop < 0 or
+                            -self.right.length <= index.stop < 0 or
                             index.stop > self.left.length):
                         tail = self.right
                         if index.stop and index.stop > self.left.length:
                             stop -= self.left.length
                     else:
-                        tail = self.left
-                        if index.stop < -self.right.length:
-                            stop += self.right.length
-                        elif index.stop == -self.right.length:
-                            stop = None
+                        if head == self.right:
+                            tail = self.right
+                            stop = 0
+                        else:
+                            tail = self.left
+                            if index.stop < -self.right.length:
+                                stop += self.right.length
                 else:
                     raise ValueError('No negative steps yet')
 
@@ -105,67 +113,12 @@ class Rope(object):
                     return head[start:stop:index.step]
                 else:
                     ilen = head.length - max(start, -head.length) % head.length if start else head.length
-                    #offset = (head.length // index.step) * index.step + index.step - head.length if index.step else None
-                    offset = ((head.length // index.step + 1) * index.step - head.length) % index.step if index.step else None
-                    print('ilen', ilen, 'offset', offset)
+                    offset = (index.step - ilen) % index.step if index.step else None
 
-                    return head[start::index.step] + tail[offset:stop:index.step]
-
-                #------------------------------------------------
-                # XXX These checks are wrong for negative stride
-                lstart = (index.start is None or
-                          0 <= index.start < self.left.length or
-                          index.start < -self.right.length)
-
-                lstop = (index.stop is not None and
-                         (0 <= index.stop <= self.left.length or
-                          index.stop <= -self.right.length))
-
-                if lstart and lstop:
-                    start = index.start
-                    if index.start is not None and index.start < 0:
-                        start += self.right.length
-
-                    if index.stop >= 0:
-                        stop = index.stop
-                    elif index.stop == -self.right.length:
-                        stop = None
+                    if not tail[offset:stop:index.step]:
+                        return head[start::index.step]
                     else:
-                        stop = index.stop + self.right.length
-
-                    return self.left[start:stop:index.step]
-
-                elif not lstart and not lstop:
-                    start = index.start
-                    if index.start >= self.left.length:
-                        start -= self.left.length
-
-                    stop = index.stop
-                    if index.stop is not None and index.stop >= 0:
-                        stop = index.stop - self.left.length
-
-                    return self.right[start:stop:index.step]
-
-                else:
-                    start = index.start
-                    if index.start is not None and index.start < 0:
-                        start += self.right.length
-
-                    stop = index.stop
-                    if index.stop is not None and index.stop >= 0:
-                        stop -= self.left.length
-
-                    rstart = None
-                    if index.step:
-                        offset = (max(start, 0) + index.step - self.left.length) % index.step
-                        if offset:
-                            rstart = offset
-                        else:
-                            rstart = None
-                    else:
-                        rstart = None
-
-                    return self.left[start::index.step] + self.right[rstart:stop:index.step]
+                        return head[start::index.step] + tail[offset:stop:index.step]
             else:
                 return Rope(self.data[index])
 

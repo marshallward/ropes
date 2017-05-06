@@ -75,43 +75,15 @@ class Test(unittest.TestCase):
         # TODO: Condense this
         self.assertEqual(Rope('abc') + Rope('de'), r[:])
 
-        self.assertEqual(Rope(''), r[:0])
-        self.assertEqual(Rope('a'), r[:1])
-        self.assertEqual(Rope('ab'), r[:2])
-        self.assertEqual(Rope('abc'), r[:3])
-        self.assertEqual(Rope('abc') + Rope('d'), r[:4])
-        self.assertEqual(Rope('abc') + Rope('de'), r[:5])
+        for i in range(-3 * len(s), 3 * len(s)):
+            self.assertEqual(s[i:], str(r[i:]))
 
-        for i in range(len(s) + 1, 3 * len(s)):
-            self.assertEqual(Rope('abc') + Rope('de'), r[:i])
+        for j in range(-3 * len(s), 3 * len(s)):
+            self.assertEqual(s[:j], str(r[:j]))
 
-        self.assertEqual(Rope('abc') + Rope('d'), r[:-1])
-        self.assertEqual(Rope('abc'), r[:-2])
-        self.assertEqual(Rope('ab'), r[:-3])
-        self.assertEqual(Rope('a'), r[:-4])
-        self.assertEqual(Rope(''), r[:-5])
-
-        for i in range(-3 * len(s), -len(s) - 1):
-            self.assertEqual(Rope(''), r[:i])
-
-        self.assertEqual(Rope('abc') + Rope('de'), r[0:])
-        self.assertEqual(Rope('bc') + Rope('de'), r[1:])
-        self.assertEqual(Rope('c') + Rope('de'), r[2:])
-        self.assertEqual(Rope('de'), r[3:])
-        self.assertEqual(Rope('e'), r[4:])
-        self.assertEqual(Rope(''), r[5:])
-
-        for i in range(len(s) + 1, 3 * len(s)):
-            self.assertEqual(Rope(''), r[i:])
-
-        self.assertEqual(Rope('e'), r[-1:])
-        self.assertEqual(Rope('de'), r[-2:])
-        self.assertEqual(Rope('c') + Rope('de'), r[-3:])
-        self.assertEqual(Rope('bc') + Rope('de'), r[-4:])
-        self.assertEqual(Rope('abc') + Rope('de'), r[-5:])
-
-        for i in range(-3 * len(s), -len(s) - 1):
-            self.assertEqual(Rope('abc') + Rope('de'), r[i:])
+        for i in range(-3 * len(s), 3 * len(s)):
+            for j in range(-3 * len(s), 3 * len(s)):
+                self.assertEqual(s[i:j], str(r[i:j]))
 
     def test_stride_threenode(self):
         s = 'abcde' + 'fghijkl'
@@ -120,7 +92,6 @@ class Test(unittest.TestCase):
         for i in range(-3 * len(s), 3 * len(s)):
             for j in range(i, 3 * len(s)):
                 for k in range(0, len(s) + 1):
-                    print(i,j,k)
                     if k == 0:
                         self.assertRaises(ValueError, r.__getitem__,
                                           slice(i,j,k))
