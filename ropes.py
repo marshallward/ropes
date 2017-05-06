@@ -72,10 +72,13 @@ class Rope(object):
 
         elif isinstance(index, slice):
             if self.left and self.right:
-                # XXX Attempt number three!
                 start = index.start
-                if (index.start is None or
-                        index.start < -self.right.length or
+                if index.start is None:
+                    if index.step is None or index.step > 0:
+                        head = self.left
+                    else:
+                        head = self.right
+                elif (index.start < -self.right.length or
                         0 <= index.start < self.left.length):
                     head = self.left
                     if index.start and index.start < -self.right.length:
@@ -107,13 +110,31 @@ class Rope(object):
                             if index.stop < -self.right.length:
                                 stop += self.right.length
                 else:
-                    raise ValueError('No negative steps yet')
+                    if (index.stop is None or
+                            index.stop < -self.right.length - 1 or
+                            0 <= index.stop < self.left.length - 1):
+                        tail = self.left
+                        if index.stop and index.stop < -self.right.length:
+                            stop += self.right.length
+                    else:
+                        if head == self.left:
+                            tail = self.left
+                            stop = -1   # Or self.left.length - 1 ?
+                        else:
+                            tail = self.right
+                            if index.stop > self.left.length:
+                                stop -= self.left.length
 
+                # Construct the rope
                 if head == tail:
                     return head[start:stop:index.step]
                 else:
                     ilen = head.length - max(start, -head.length) % head.length if start else head.length
-                    offset = (index.step - ilen) % index.step if index.step else None
+                    # TODO: Negative step offset??
+                    if index.step:
+                        offset = (index.step - ilen) % index.step if index.step else None
+                    else:
+                        offset = None
 
                     if not tail[offset:stop:index.step]:
                         return head[start::index.step]
