@@ -129,10 +129,17 @@ class Rope(object):
                 if head == tail:
                     return head[start:stop:index.step]
                 else:
-                    ilen = head.length - max(start, -head.length) % head.length if start else head.length
-                    # TODO: Negative step offset??
                     if index.step:
-                        offset = (index.step - ilen) % index.step if index.step else None
+                        if start is None:
+                            delta = -head.length
+                        elif start >= 0:
+                            delta = start - head.length
+                        else:
+                            delta = max(index.start, -self.length) + tail.length
+
+                        offset = delta % index.step
+                        if offset == 0:
+                            offset = None
                     else:
                         offset = None
 
