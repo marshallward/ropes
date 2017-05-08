@@ -129,7 +129,9 @@ class Rope(object):
                 if head == tail:
                     return head[start:stop:index.step]
                 else:
-                    if index.step:
+                    if not index.step:
+                        offset = None
+                    elif index.step > 0:
                         if start is None:
                             delta = -head.length
                         elif start >= 0:
@@ -140,8 +142,14 @@ class Rope(object):
                         offset = delta % index.step
                         if offset == 0:
                             offset = None
+                    # XXX Testing
                     else:
-                        offset = None
+                        if start is None:
+                            offset = index.step - (-head.length) % index.step
+                        elif start > 0:
+                            offset = index.step - (start - head.length) % index.step
+                        else:
+                            offset = start % index.step
 
                     if not tail[offset:stop:index.step]:
                         return head[start::index.step]
