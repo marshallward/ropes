@@ -145,7 +145,7 @@ class Rope(object):
                     else:
                         if start is None:
                             offset = index.step + (head.length - 1) % (-index.step)
-                        elif start > 0:
+                        elif start >= 0:
                             offset = index.step + min(start, head.length - 1) % (-index.step)
                         else:
                             offset = index.step + (start + head.length) % (-index.step)

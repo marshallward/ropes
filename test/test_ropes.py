@@ -99,10 +99,8 @@ class Test(unittest.TestCase):
                     self.assertEqual(s[:i:k], str(r[:i:k]))
 
         for i in range(-3 * len(s), 3 * len(s)):
-            for j in range(i, 3 * len(s)):
+            for j in range(-3 * len(s), 3 * len(s)):
                 for k in range(-len(s), len(s) + 1):
-                #for k in range(0, len(s) + 1):
-                    print(i,j,k)
                     if k == 0:
                         self.assertRaises(ValueError, r.__getitem__,
                                           slice(i,j,k))
