@@ -111,8 +111,8 @@ class Rope(object):
                                 stop += self.right.length
                 else:
                     if (index.stop is None or
-                            index.stop < -self.right.length - 1 or
-                            0 <= index.stop < self.left.length - 1):
+                            index.stop < -self.right.length or
+                            0 <= index.stop < self.left.length):
                         tail = self.left
                         if index.stop and index.stop < -self.right.length:
                             stop += self.right.length
@@ -145,11 +145,11 @@ class Rope(object):
                     # XXX Testing
                     else:
                         if start is None:
-                            offset = index.step - (-head.length) % index.step
+                            offset = index.step + (head.length - 1) % (-index.step)
                         elif start > 0:
-                            offset = index.step - (start - head.length) % index.step
+                            offset = index.step + min(start, head.length - 1) % (-index.step)
                         else:
-                            offset = start % index.step
+                            offset = index.step + (start + head.length) % (-index.step)
 
                     if not tail[offset:stop:index.step]:
                         return head[start::index.step]
