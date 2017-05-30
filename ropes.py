@@ -1,4 +1,4 @@
-__version__ = '0.0.1'
+__version__ = '0.1'
 
 class Rope(object):
     # NOTE: self.left and self.right should either both point to subnodes or
@@ -39,6 +39,9 @@ class Rope(object):
 
     def __add__(self, other):
         # TODO: Automatically collapse empty ropes
+        if isinstance(other, str):
+            other = Rope(other)
+
         r = Rope()
         r.left = self
         r.right = other
@@ -156,78 +159,6 @@ class Rope(object):
                         return head[start::index.step] + tail[offset:stop:index.step]
             else:
                 return Rope(self.data[index])
-
-            #----------------------------------------------------
-            # Old explicit implementation
-
-            # Slice logic taken from CPython's sliceobject.c
-            # It may be possible to streamline this in Python
-
-            if self.left and self.right:
-                # Step initialization
-                if index.step is None:
-                    step = 1
-                else:
-                    if index.step == 0:
-                        raise ValueError('slice step cannot be zero')
-                    else:
-                        step = index.step
-
-                # Default start/stop indices
-                if step < 0:
-                    default_start = self.length - 1
-                    default_stop = -1
-                else:
-                    default_start = 0
-                    default_stop = self.length
-
-                # Start index
-                if index.start is None:
-                    start = default_start
-                else:
-                    start = index.start
-                    if start < 0:
-                        start += self.length
-                    if start < 0:
-                        start = 0 if step > 0 else -1
-                    if start >= self.length:
-                        start = self.length if step > 0 else (self.length - 1)
-
-                # Stop index
-                if index.stop is None:
-                    stop = default_stop
-                else:
-                    stop = index.stop
-                    if stop < 0:
-                        stop += self.length
-                    if stop < 0:
-                        stop = 0 if step > 0 else -1
-                    if stop >= self.length:
-                        stop = self.length if step > 0 else (self.length - 1)
-
-                # Apply slice
-                print('index', index.start, index.stop, index.step)
-                print('slice', start, stop, step)
-                if start < self.left.length:
-                    if stop <= self.left.length:
-                        print('LEFT')
-                        return self.left[start:stop:step]
-                    else:
-                        print('MIXED')
-                        return (self.left[start::step]
-                                + self.right[(start + step - self.left.length) % step
-                                             :(stop - self.left.length):step])
-                else:
-                    print('RIGHT')
-                    return self.right[(start - self.left.length)
-                                      :max(stop - self.left.length, 0)
-                                      :step]
-            else:
-                return Rope(self.data[index])
-
-        else:
-            raise TypeError('rope indices must be integers or slices, not {}'
-                            ''.format(type(index).__name__))
 
     def __repr__(self):
         # TODO: Parentheses are too conservative, need to clean this up
