@@ -2,7 +2,7 @@
 Ropes
 =====
 
-Early implementation of a Rope data structure in Python.
+Basic implementation of a rope-based string in Python.
 
 
 About ropes
@@ -13,12 +13,17 @@ binary tree, and modifications to the string are achieved by either replacing
 existing substring branches or by inserting new substrings into the tree
 structure.
 
-This is a preliminary version which supports the basic operations, such as
-concatentation, indexing, slices, and strides.
+This is a very basic implementation which supports the basic operations, such
+as concatentation, indexing, slices, and strides.
 
-Implementation of some features is currently poor, particularly the slicing
-operations.  No effort is made to balance the tree or otherwise optimise the
-data structure.
+There has been little attention to performance, particularly related to the
+dynamic rebalancing of the tree, which is one of the main reasons to ever
+consider using a rope, so this is more for demonstration purposes than for use
+in production.
+
+Having said that, I am happy with the API and integration with intrinsic Python
+syntax, and there is certainly opportunity for improving the implementation of
+the internal tree.
 
 
 Usage
@@ -57,5 +62,3 @@ Strings can be inserted between existing ropes.
    >>> print(r + u + s)
    abc123def
    >>>
-
-Current usage is very basic, but will hopefully improve in the future.
