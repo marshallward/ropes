@@ -123,6 +123,12 @@ class Test(unittest.TestCase):
         self.assertEqual(r, t)
         self.assertNotEqual(r, u)
 
+    def test_concatenation(self):
+        a = Rope(['Hello ', 'my '])
+        b = Rope(['na', 'me i'])
+        c = Rope(['s', ' Simon'])
+        self.assertEqual(str(a + (b + c)), 'Hello my name is Simon')
+
 
 if __name__ == '__main__':
     unittest.main()
