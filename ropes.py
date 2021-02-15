@@ -51,7 +51,7 @@ class Rope(object):
 
     def __len__(self):
         if self.left and self.right:
-            return len(self.left.data) + len(self.right.data)
+            return len(self.left) + len(self.right)
         else:
             return(len(self.data))
 
