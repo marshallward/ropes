@@ -13,8 +13,8 @@ binary tree, and modifications to the string are achieved by either replacing
 existing substring branches or by inserting new substrings into the tree
 structure.
 
-This is a very basic implementation which supports the basic operations, such
-as concatentation, indexing, slices, and strides.
+This is a very simple implementation which supports the basic operations, such
+as concatenation, indexing, slices, and strides.
 
 There has been little attention to performance, particularly related to the
 dynamic rebalancing of the tree, which is one of the main reasons to ever
